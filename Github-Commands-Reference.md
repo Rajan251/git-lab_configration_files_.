@@ -75,3 +75,193 @@ git remote add origin https://github.com/user/repo.git
 git remote -v
 git status
 ```
+
+# Git Branching Strategies
+
+## Core Concepts
+
+### 1. Branch Types
+- **Main/Master**: Production-ready code (protected)
+- **Develop**: Integration branch for features
+- **Feature**: Single feature development
+- **Release**: Preparation for production
+- **Hotfix**: Critical production fixes
+
+### 2. Common Strategies
+| Strategy | Description | Best For |
+|----------|-------------|----------|
+| **Git Flow** | Strict branching model | Complex release cycles |
+| **GitHub Flow** | Simplified workflow | Continuous delivery |
+| **Trunk-Based** | Single main branch | Small teams/CI/CD |
+
+## Essential Commands
+
+### 1. Basic Branch Operations
+```bash
+# List all branches (local)
+git branch
+
+# List all branches (including remote)
+git branch -a
+
+# Create new branch
+git branch feature-auth
+
+# Switch to branch
+git checkout feature-auth
+
+# Create and switch in one command
+git checkout -b hotfix-123
+
+# Delete branch (safe)
+git branch -d old-feature
+
+# Force delete branch
+git branch -D abandoned-feature
+```
+### 2. Remote Branch Management
+
+```bash
+# Push branch to remote
+git push origin feature-auth
+
+# Track remote branch
+git branch --set-upstream-to=origin/feature-auth
+
+# Delete remote branch
+git push origin --delete stale-branch
+
+# Fetch all remote branches
+git fetch --all
+```
+### 3. Branch Comparison
+
+```bash
+# Show differences between branches
+git diff main..feature-auth
+
+# See commit differences
+git log main..feature-auth
+
+# Check which branches contain a commit
+git branch --contains abc123
+```
+
+## Practical Examples
+
+### Example 1: Feature Branch Workflow
+```bash
+# Start new feature
+git checkout -b feature-payment main
+
+# Make changes and commit
+git add payment.js
+git commit -m "Add payment processing"
+
+# Push to remote
+git push -u origin feature-payment
+
+# When ready, create PR and merge to main
+```
+### Example 2: Hotfix Branch
+```
+# Create from main
+git checkout -b hotfix-login main
+
+# Fix the issue
+git add login.js
+git commit -m "Fix login validation"
+
+# Merge back to main
+git checkout main
+git merge hotfix-login
+git push
+
+# Also merge to develop if using Git Flow
+git checkout develop
+git merge hotfix-login
+git push
+```
+### Example 3: Branch Cleanup
+```bash
+# List merged branches
+git branch --merged main
+
+# Delete all merged branches (except main)
+git branch --merged main | grep -v "main" | xargs git branch -d
+
+# Prune remote tracking branches
+git remote prune origin
+```
+## Advanced Techniques
+
+## 1. Branch Rebasing
+```bash
+# Rebase feature branch onto latest main
+git checkout feature-auth
+git rebase main
+
+# Interactive rebase (last 3 commits)
+git rebase -i HEAD~3
+```
+
+### 2. Branch Renaming
+```bash
+# Rename local branch
+git branch -m old-name new-name
+
+# Push renamed branch
+git push origin -u new-name
+
+# Delete old remote branch
+git push origin --delete old-name
+```
+
+### 3. Worktrees (Parallel Development)
+```bash
+# Create separate worktree
+git worktree add ../hotfix hotfix-456
+
+# List worktrees
+git worktree list
+
+# Remove worktree
+git worktree remove hotfix-456
+```
+
+### Branching Strategy Cheat Sheet
+### Git Flow
+
+```mermaid
+graph LR
+    A[main] --> B[release]
+    C[develop] --> B
+    C --> D[feature]
+    A --> E[hotfix]
+```
+### GitHub Flow
+
+```mermaid
+graph LR
+    A[main] --> B[feature]
+    B --> A
+```
+
+### Trunk-Based
+
+```mermaid
+graph LR
+    A[main] --> B[short-lived feature]
+    B --> A
+```
+
+## Pro Tips
+### Naming Conventions:
+
+---
+
+- feature/ prefix for features
+
+- fix/ prefix for bug fixes
+
+- release/ prefix for releases
